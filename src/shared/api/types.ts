@@ -77,10 +77,9 @@ export interface CreateClaimInput {
 }
 
 export type ClaimStatus =
-    | 'pending'
-    | 'processing'
-    | 'settled'
-    | 'failed'
+    | 'pending' // submitted; settles within ~20s
+    | 'completed' // succeeded
+    | 'failed' // rejected; amount returns to available
     | (string & {});
 
 export interface Claim {
@@ -90,6 +89,8 @@ export interface Claim {
     receiveAmount: string;
     createdAt: string;
     updatedAt: string;
+    // Set when status is 'failed'; null otherwise.
+    failureReason?: string | null;
     // Echoed back by the API; kept optional to avoid over-asserting the response shape.
     asset?: string;
     amount?: string;

@@ -1,3 +1,6 @@
+This is a DEPLOYMENT URL:  https://lixo1337-test.expo.app
+
+
 # Welcome to your Expo app 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).

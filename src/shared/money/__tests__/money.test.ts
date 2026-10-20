@@ -2,10 +2,13 @@ import type { BalanceItem } from '@/shared/api';
 import {
     addDecimals,
     availableUsd,
+    compareDecimals,
+    decimalPlaces,
     formatTokenAmount,
     formatUsd,
     isZeroDecimal,
     multiplyDecimals,
+    subtractDecimals,
     totalAvailableUsd,
 } from '@/shared/money';
 
@@ -44,6 +47,40 @@ describe('addDecimals', () => {
     it('adds across differing scales', () => {
         expect(addDecimals('0.1', '0.2')).toBe('0.3');
         expect(addDecimals('100', '0.001')).toBe('100.001');
+    });
+});
+
+describe('subtractDecimals', () => {
+    it('subtracts across differing scales', () => {
+        expect(subtractDecimals('1', '0.4')).toBe('0.6');
+        expect(subtractDecimals('100.001', '0.001')).toBe('100');
+    });
+
+    it('yields negative results and exact fee math', () => {
+        expect(subtractDecimals('0.3', '0.5')).toBe('-0.2');
+        // 0.1 - 0.3 would drift to -0.19999999999999998 in float math.
+        expect(subtractDecimals('0.1', '0.3')).toBe('-0.2');
+    });
+});
+
+describe('compareDecimals', () => {
+    it('compares regardless of scale', () => {
+        expect(compareDecimals('0.10', '0.1')).toBe(0);
+        expect(compareDecimals('1.5', '2')).toBe(-1);
+        expect(compareDecimals('2', '1.5')).toBe(1);
+    });
+
+    it('compares negatives correctly', () => {
+        expect(compareDecimals('-1', '0')).toBe(-1);
+        expect(compareDecimals('-0.5', '-0.6')).toBe(1);
+    });
+});
+
+describe('decimalPlaces', () => {
+    it('counts fraction digits', () => {
+        expect(decimalPlaces('1.230')).toBe(3);
+        expect(decimalPlaces('5')).toBe(0);
+        expect(decimalPlaces('0.00000001')).toBe(8);
     });
 });
 

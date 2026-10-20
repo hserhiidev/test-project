@@ -52,6 +52,20 @@ function multiply(a: Decimal, b: Decimal): Decimal {
     return { neg: coef !== 0n && a.neg !== b.neg, coef, scale: a.scale + b.scale };
 }
 
+function negate(d: Decimal): Decimal {
+    return d.coef === 0n ? d : { ...d, neg: !d.neg };
+}
+
+function subtract(a: Decimal, b: Decimal): Decimal {
+    return add(a, negate(b));
+}
+
+/** -1 if a < b, 1 if a > b, 0 if equal. */
+function compare(a: Decimal, b: Decimal): number {
+    const { a: ac, b: bc } = align(a, b);
+    return ac < bc ? -1 : ac > bc ? 1 : 0;
+}
+
 /** Render a decimal to exactly `dp` fraction digits, rounding half-up. */
 function toFixed(d: Decimal, dp: number): string {
     let coef = d.coef;
@@ -97,6 +111,24 @@ export function multiplyDecimals(a: string, b: string): string {
 export function addDecimals(a: string, b: string): string {
     const d = add(parse(a), parse(b));
     return trimTrailingZeros(toFixed(d, d.scale));
+}
+
+/** Exact difference of two decimal strings (a − b). */
+export function subtractDecimals(a: string, b: string): string {
+    const d = subtract(parse(a), parse(b));
+    return trimTrailingZeros(toFixed(d, d.scale));
+}
+
+/** Compare two decimal strings: -1 if a < b, 0 if equal, 1 if a > b. */
+export function compareDecimals(a: string, b: string): -1 | 0 | 1 {
+    return compare(parse(a), parse(b)) as -1 | 0 | 1;
+}
+
+/** Count fraction digits in a decimal string ("1.230" → 3, "5" → 0). */
+export function decimalPlaces(value: string): number {
+    const trimmed = value.trim();
+    const dot = trimmed.indexOf('.');
+    return dot === -1 ? 0 : trimmed.length - dot - 1;
 }
 
 /**

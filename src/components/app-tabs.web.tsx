@@ -23,6 +23,9 @@ export default function AppTabs() {
           <TabTrigger name="home" href="/" asChild>
             <TabButton>Balances</TabButton>
           </TabTrigger>
+          <TabTrigger name="claim" href="/claim" asChild>
+            <TabButton>Claim</TabButton>
+          </TabTrigger>
         </CustomTabList>
       </TabList>
     </Tabs>
